@@ -301,6 +301,30 @@ void movement(struct Game *game) {
 			game->objects[i].y += OBJECT_SPEED;
 		}
 	}
+
+	/* 
+		Bear and object collision
+	*/
+	for (int i = 0; i < NUM_OBJECTS * 2; ++i)
+	{
+		// All hail the mighty bounding box calculation 
+		// I ported this from my LUA code in 2015! It might just work!
+		if (game->bear.x < game->objects[i].x + OBJECT_WIDTH &&
+			game->bear.x + OBJECT_WIDTH > game->objects[i].x &&
+			game->bear.y < game->objects[i].y + OBJECT_HEIGHT &&
+			OBJECT_HEIGHT + game->bear.y > game->objects[i].y) {
+	
+			game->objects[i].x = random_coordinate_x();
+			game->objects[i].y = random_coordinate_y();
+			game->objects[i].direction = random_direction();
+	
+			if (game->objects[i].type == FIRE) {
+				game_mode = GAME_OVER;
+			} else if (game->objects[i].type == STAR) {
+				score += 1000;
+			}
+		}
+	}
 }
 
 //---------------------------------------------------------------------------------
