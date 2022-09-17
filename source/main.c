@@ -132,6 +132,8 @@ Sprite bg_background;
 Sprite bg_bottom;
 Sprite bg_title;
 Sprite bg_title_bottom;
+Sprite bg_game_over;
+Sprite bg_game_over_bottom;
 
 //---------------------------------------------------------------------------------
 static void initSprites() {
@@ -147,12 +149,16 @@ static void initSprites() {
 	C2D_SpriteFromSheet(&bg_title_bottom.spr, spriteSheet, 8);
 	C2D_SpriteFromSheet(&spr_classic.spr, spriteSheet, 9);
 	C2D_SpriteFromSheet(&spr_hard.spr, spriteSheet, 10);
+	C2D_SpriteFromSheet(&bg_game_over.spr, spriteSheet, 11);
+	C2D_SpriteFromSheet(&bg_game_over_bottom.spr, spriteSheet, 12);
 
 	// Background position is always 0 0
 	C2D_SpriteSetPos(&bg_background.spr, 0, 0);
 	C2D_SpriteSetPos(&bg_bottom.spr, 0, 0);
 	C2D_SpriteSetPos(&bg_title.spr, 0, 0);
 	C2D_SpriteSetPos(&bg_title_bottom.spr, 0, 0);
+	C2D_SpriteSetPos(&bg_game_over.spr, 0, 0);
+	C2D_SpriteSetPos(&bg_game_over_bottom.spr, 0, 0);
 }
 
 static void initStrings() {
@@ -320,6 +326,14 @@ void draw_title_bottom() {
 	}
 }
 
+void draw_game_over_top() {
+	C2D_DrawSprite(&bg_game_over.spr);
+}
+
+void draw_game_over_bottom() {
+	C2D_DrawSprite(&bg_game_over_bottom.spr);
+}
+
 void read_input(struct Game *game) {
 	hidScanInput();
 		
@@ -354,6 +368,16 @@ void read_title_input() {
 		difficulty = CLASSIC;
 	if (kDown & KEY_RIGHT)
 		difficulty = HARD;
+}
+
+void read_game_over_input() {
+	hidScanInput();
+		
+	u32 kDown = hidKeysDown();
+
+	// Check for pause
+	if (kDown & KEY_START)
+		game_mode = TITLE;
 }
 
 void movement(struct Game *game) {
@@ -532,7 +556,14 @@ int main(int argc, char* argv[]) {
 			C2D_SceneBegin(bot);
 			draw_bottom(game);
 		} else if (game_mode == GAME_OVER) {
+			read_game_over_input();
 
+			C2D_SceneBegin(top);
+			draw_game_over_top();
+
+			C2D_SceneBegin(bot);
+			draw_game_over_bottom();
+			draw_score();
 		}
 
 		C3D_FrameEnd(0);
