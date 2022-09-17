@@ -18,9 +18,21 @@
 #define TOUCH_WIDTH 320
 #define TOUCH_HEIGHT 240
 
-#define BEAR_SPEED 6
-#define OBJECT_SPEED 3
-#define NUM_OBJECTS 3
+#define BEAR_SPEED_CLASSIC 5
+#define BEAR_SPEED_HARD 6
+
+#define OBJECT_SPEED_CLASSIC 2.5 
+#define OBJECT_SPEED_HARD 3
+
+#define NUM_OBJECTS_CLASSIC 2
+#define NUM_OBJECTS_HARD 3
+
+#define NUM_LIVES_CLASSIC 3
+#define NUM_LIVES_HARD 1
+
+int BEAR_SPEED;
+int OBJECT_SPEED;
+int NUM_OBJECTS;
 
 // Simple sprite struct
 typedef struct
@@ -71,7 +83,7 @@ enum Difficulties {
 
 struct Game {
 	struct Bear bear;
-	struct BearObject objects[NUM_OBJECTS * 2];
+	struct BearObject objects[NUM_OBJECTS_HARD * 2];
 	int score;
 };
 
@@ -199,10 +211,21 @@ void init_game(struct Game *game) {
     }
 
     score = 0;
-    lives = 3;
 }
 
 void start_game(struct Game *game) {
+	if (difficulty == CLASSIC) {
+		NUM_OBJECTS = NUM_OBJECTS_CLASSIC;
+		BEAR_SPEED = BEAR_SPEED_CLASSIC;
+		OBJECT_SPEED = OBJECT_SPEED_CLASSIC;
+		lives = NUM_LIVES_CLASSIC;
+	} else if (difficulty == HARD) {
+		NUM_OBJECTS = NUM_OBJECTS_HARD;
+		BEAR_SPEED = BEAR_SPEED_HARD;
+		OBJECT_SPEED = OBJECT_SPEED_HARD;
+		lives = NUM_LIVES_HARD;
+	}
+
 	//srand(gettime()); TODO
 	init_game(game);
 	game_mode = GAME;
