@@ -109,12 +109,6 @@ static void initSprites() {
 	C2D_SpriteFromSheet(&spr_star.spr, spriteSheet, 4);
 	C2D_SpriteFromSheet(&bg_background.spr, spriteSheet, 5);
 
-	spr_bear.dx = 150;
-	spr_bear.dy = 150;
-
-	//C2D_SpriteMove(&spr_bear.spr, spr_bear.dx, spr_bear.dy);
-	C2D_SpriteSetPos(&spr_bear.spr, spr_bear.dx, spr_bear.dy);
-
 	// Background position is always 0 0
 	C2D_SpriteSetPos(&bg_background.spr, 0, 0);
 }
@@ -188,7 +182,47 @@ void draw() {
 		C2D_DrawSprite(&spr_wall.spr);
 	}
 
+	C2D_SpriteSetPos(&spr_bear.spr, spr_bear.dx, spr_bear.dy);
 	C2D_DrawSprite(&spr_bear.spr);
+}
+
+void read_input(struct Game *game) {
+	hidScanInput();
+		
+	u32 kDown = hidKeysDown();
+
+	// Digital input
+	if (kDown & KEY_UP)
+		game->bear.direction = BEAR_UP;
+	if (kDown & KEY_DOWN)
+		game->bear.direction = BEAR_DOWN;
+	if (kDown & KEY_LEFT)
+		game->bear.direction = BEAR_LEFT;
+	if (kDown & KEY_RIGHT)
+		game->bear.direction = BEAR_RIGHT;
+}
+
+void movement(struct Game *game) {
+	/*
+		Bear movement
+	*/
+	switch(game->bear.direction) {
+		case BEAR_UP:
+			game->bear.y -= BEAR_SPEED;
+			break;
+		case BEAR_DOWN:
+			game->bear.y += BEAR_SPEED;
+			break;
+		case BEAR_LEFT:
+			game->bear.x -= BEAR_SPEED;
+			break;
+		case BEAR_RIGHT:
+			game->bear.x += BEAR_SPEED;
+			break;
+	}
+
+	spr_bear.dx = game->bear.x;
+	spr_bear.dy = game->bear.y;
 }
 
 //---------------------------------------------------------------------------------
@@ -221,36 +255,20 @@ int main(int argc, char* argv[]) {
 
 	// Create a game instance
 	struct Game* game = malloc(sizeof(struct Game));
+	init_game(game);
 
 	// Main loop
 	while (aptMainLoop())
 	{
-		hidScanInput();
-		/*
-		// Respond to user input
-		u32 kDown = hidKeysDown();
-		if (kDown & KEY_START)
-			break; // break in order to return to hbmenu
-
-		u32 kHeld = hidKeysHeld();
-		if ((kHeld & KEY_UP) && numSprites < MAX_SPRITES)
-			numSprites++;
-		if ((kHeld & KEY_DOWN) && numSprites > 1)
-			numSprites--;
-
-		moveSprites();
-
-		printf("\x1b[1;1HSprites: %zu/%u\x1b[K", numSprites, MAX_SPRITES);
-		printf("\x1b[2;1HCPU:     %6.2f%%\x1b[K", C3D_GetProcessingTime()*6.0f);
-		printf("\x1b[3;1HGPU:     %6.2f%%\x1b[K", C3D_GetDrawingTime()*6.0f);
-		printf("\x1b[4;1HCmdBuf:  %6.2f%%\xx1b[K", C3D_GetCmdBufUsage()*100.0f);
-		*/
+		// Read input
+		read_input(game);
 
 		// Render the scene
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
 		C2D_SceneBegin(top);
 
+		movement(game);
 		draw();
 
 		C3D_FrameEnd(0);
