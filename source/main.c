@@ -92,6 +92,14 @@ bool show_button_prompt = true;
 // Initialise the sprite sheet
 static C2D_SpriteSheet spriteSheet;
 
+// Initialise text-related things
+static C2D_Font fnt_dinbek;
+C2D_TextBuf g_staticBuf;
+C2D_Text g_staticText;
+
+int white;
+float score_size = 0.5f;
+
 // Sprites
 Sprite spr_bear;
 Sprite spr_wall;
@@ -341,6 +349,11 @@ int main(int argc, char* argv[]) {
 	C3D_RenderTarget* top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
 	C3D_RenderTarget* bot = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 
+	// Font
+	fnt_dinbek = C2D_FontLoad("romfs:/gfx/dinbekbold.bcfnt");
+	g_staticBuf  = C2D_TextBufNew(4096); // support up to 4096 glyphs in the buffer
+	white = C2D_Color32f(255.0f,255.0f,255.0f,255.0f);
+
 	// Load graphics
 	spriteSheet = C2D_SpriteSheetLoad("romfs:/gfx/sprites.t3x");
 	if (!spriteSheet) svcBreak(USERBREAK_PANIC);
@@ -370,11 +383,17 @@ int main(int argc, char* argv[]) {
 
 		C2D_DrawSprite(&bg_bottom.spr);
 
+		C2D_TextFontParse(&g_staticText, fnt_dinbek, g_staticBuf, "Banana.");
+		C2D_DrawText(&g_staticText, C2D_WithColor, 8.0f, 8.0f, 0.5f, score_size, score_size, white);
+
 		C3D_FrameEnd(0);
 	}
 
 	// Delete graphics
 	C2D_SpriteSheetFree(spriteSheet);
+
+	// Delete font
+	C2D_FontFree(fnt_dinbek);
 
 	// Deinit libs
 	C2D_Fini();
