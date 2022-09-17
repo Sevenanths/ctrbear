@@ -248,6 +248,56 @@ void movement(struct Game *game) {
 
 	spr_bear.dx = game->bear.x;
 	spr_bear.dy = game->bear.y;
+
+	/*
+		Object movement
+	*/
+	for (int i = 0; i < NUM_OBJECTS * 2; ++i)
+	{
+		// Left wall collision
+		if (game->objects[i].x - OBJECT_SPEED <= OBJECT_WIDTH) {
+			if (game->objects[i].direction == UP_LEFT) {
+				game->objects[i].direction = UP_RIGHT;
+			} else if (game->objects[i].direction == DOWN_LEFT) {
+				game->objects[i].direction = DOWN_RIGHT;
+			}
+		// Right wall collision
+		} else if (game->objects[i].x + OBJECT_SPEED >= GC_WIDTH - (OBJECT_WIDTH * 2)) {
+			if (game->objects[i].direction == UP_RIGHT) {
+				game->objects[i].direction = UP_LEFT;
+			} else if (game->objects[i].direction == DOWN_RIGHT) {
+				game->objects[i].direction = DOWN_LEFT;
+			}
+		// Top wall collision
+		} else if (game->objects[i].y - OBJECT_SPEED <= OBJECT_HEIGHT) {
+			if (game->objects[i].direction == UP_LEFT) {
+				game->objects[i].direction = DOWN_LEFT;
+			} else if (game->objects[i].direction == UP_RIGHT) {
+				game->objects[i].direction = DOWN_RIGHT;
+			}
+		// Bottom wall collision
+		} else if (game->objects[i].y + OBJECT_SPEED >= GC_HEIGHT - (OBJECT_HEIGHT * 2)) {
+			if (game->objects[i].direction == DOWN_LEFT) {
+				game->objects[i].direction = UP_LEFT;
+			} else if (game->objects[i].direction == DOWN_RIGHT) {
+				game->objects[i].direction = UP_RIGHT;
+			}
+		}
+	
+		if (game->objects[i].direction == UP_LEFT) {
+			game->objects[i].x -= OBJECT_SPEED;
+			game->objects[i].y -= OBJECT_SPEED;
+		} else if (game->objects[i].direction == UP_RIGHT) {
+			game->objects[i].x += OBJECT_SPEED;
+			game->objects[i].y -= OBJECT_SPEED;
+		} else if (game->objects[i].direction == DOWN_LEFT) {
+			game->objects[i].x -= OBJECT_SPEED;
+			game->objects[i].y += OBJECT_SPEED;
+		} else if (game->objects[i].direction == DOWN_RIGHT) {
+			game->objects[i].x += OBJECT_SPEED;
+			game->objects[i].y += OBJECT_SPEED;
+		}
+	}
 }
 
 //---------------------------------------------------------------------------------
