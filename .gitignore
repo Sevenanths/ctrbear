@@ -50,3 +50,11 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# 3DS specific files
+*.3dsx
+*.smdh
+
+# Build files
+build/*
+romfs/*
