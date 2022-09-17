@@ -154,7 +154,7 @@ void start_game(struct Game *game) {
 	game_mode = GAME;
 }
 
-void draw() {
+void draw(struct Game *game) {
 	// Background image
 	C2D_DrawSprite(&bg_background.spr);
 
@@ -180,6 +180,18 @@ void draw() {
 		// Right walls
 		C2D_SpriteSetPos(&spr_wall.spr, GC_WIDTH - OBJECT_WIDTH, y * OBJECT_HEIGHT);
 		C2D_DrawSprite(&spr_wall.spr);
+	}
+
+	// Draw objects
+	for (int i = 0; i < NUM_OBJECTS * 2; ++i)
+	{
+		if (game->objects[i].type == FIRE) {
+			C2D_SpriteSetPos(&spr_fire.spr, game->objects[i].x, game->objects[i].y);
+			C2D_DrawSprite(&spr_fire.spr);
+		} else if (game->objects[i].type == STAR) {
+			C2D_SpriteSetPos(&spr_star.spr, game->objects[i].x, game->objects[i].y);
+			C2D_DrawSprite(&spr_star.spr);
+		}
 	}
 
 	C2D_SpriteSetPos(&spr_bear.spr, spr_bear.dx, spr_bear.dy);
@@ -282,7 +294,7 @@ int main(int argc, char* argv[]) {
 		C2D_SceneBegin(top);
 
 		movement(game);
-		draw();
+		draw(game);
 
 		C3D_FrameEnd(0);
 	}
