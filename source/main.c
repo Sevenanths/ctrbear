@@ -88,6 +88,7 @@ int random_direction() {
 }
 
 int score = 0;
+int lives = 3;
 int game_mode = TITLE;
 int flicker_timer = 0;
 bool show_button_prompt = true;
@@ -213,7 +214,7 @@ void draw(struct Game *game) {
 	C2D_DrawSprite(&spr_bear.spr);
 }
 
-void draw_score(int score) {
+void draw_score() {
 	// Initialise the string to store the score in
 	char str_score[32];
 	itoa(score, str_score, 10);
@@ -244,6 +245,11 @@ void draw_score(int score) {
 	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x, score_y, 0.5f, score_size, score_size, white);
 
 	C2D_TextBufClear(g_dynamicBuf);
+}
+
+void draw_bottom(struct Game *game) {
+	C2D_DrawSprite(&bg_bottom.spr);
+	draw_score();
 }
 
 void read_input(struct Game *game) {
@@ -419,8 +425,7 @@ int main(int argc, char* argv[]) {
 		C2D_TargetClear(bot, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
 		C2D_SceneBegin(bot);
 
-		C2D_DrawSprite(&bg_bottom.spr);
-		draw_score(score);
+		draw_bottom(game);
 
 		C3D_FrameEnd(0);
 	}
