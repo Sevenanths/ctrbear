@@ -92,7 +92,7 @@ int random_direction() {
 }
 
 int score = 0;
-int lives = 3;
+int lives = 0;
 bool paused = false;
 int game_mode = TITLE;
 int difficulty = CLASSIC;
@@ -199,6 +199,7 @@ void init_game(struct Game *game) {
     }
 
     score = 0;
+    lives = 3;
 }
 
 void start_game(struct Game *game) {
@@ -354,14 +355,14 @@ void read_input(struct Game *game) {
 		game->bear.direction = BEAR_RIGHT;
 }
 
-void read_title_input() {
+void read_title_input(struct Game *game) {
 	hidScanInput();
 		
 	u32 kDown = hidKeysDown();
 
 	// Check for pause
 	if (kDown & KEY_START)
-		game_mode = GAME;
+		start_game(game);
 
 	// Digital input
 	if (kDown & KEY_LEFT)
@@ -525,7 +526,6 @@ int main(int argc, char* argv[]) {
 
 	// Create a game instance
 	struct Game* game = malloc(sizeof(struct Game));
-	init_game(game);
 
 	// Main loop
 	while (aptMainLoop())
@@ -536,7 +536,7 @@ int main(int argc, char* argv[]) {
 		C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
 		C2D_TargetClear(bot, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
 		if (game_mode == TITLE) {
-			read_title_input();
+			read_title_input(game);
 
 			C2D_SceneBegin(top);
 			draw_title_top();
