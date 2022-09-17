@@ -235,10 +235,10 @@ void draw_score(int score) {
 
 	
 	// The first four calls are used to draw the font outline
-	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x + 1, score_y + 1, 0.5f, score_size, score_size, white);
-	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x - 1, score_y - 1, 0.5f, score_size, score_size, white);
-	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x + 1, score_y - 1, 0.5f, score_size, score_size, white);
-	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x - 1, score_y + 1, 0.5f, score_size, score_size, white);
+	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x + 1, score_y + 1, 0.5f, score_size, score_size, black);
+	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x - 1, score_y - 1, 0.5f, score_size, score_size, black);
+	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x + 1, score_y - 1, 0.5f, score_size, score_size, black);
+	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x - 1, score_y + 1, 0.5f, score_size, score_size, black);
 
 	// The final call is the actual centred font
 	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x, score_y, 0.5f, score_size, score_size, white);
