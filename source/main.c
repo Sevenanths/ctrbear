@@ -379,7 +379,10 @@ void movement(struct Game *game) {
 			game->objects[i].direction = random_direction();
 	
 			if (game->objects[i].type == FIRE) {
-				game_mode = GAME_OVER;
+				lives -= 1;
+
+				if (lives == 0)
+					game_mode = GAME_OVER;
 			} else if (game->objects[i].type == STAR) {
 				score += 1000;
 			}
