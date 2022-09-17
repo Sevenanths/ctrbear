@@ -84,6 +84,11 @@ int random_direction() {
 	return random_integer(1, 4);
 }
 
+int score = 0;
+int game_mode = TITLE;
+int flicker_timer = 0;
+bool show_button_prompt = true;
+
 // Initialise the sprite sheet
 static C2D_SpriteSheet spriteSheet;
 
@@ -92,6 +97,7 @@ Sprite spr_bear;
 Sprite spr_wall;
 Sprite spr_fire;
 Sprite spr_star;
+Sprite bg_background;
 
 //---------------------------------------------------------------------------------
 static void initSprites() {
@@ -107,6 +113,47 @@ static void initSprites() {
 
 	//C2D_SpriteMove(&spr_bear.spr, spr_bear.dx, spr_bear.dy);
 	C2D_SpriteSetPos(&spr_bear.spr, spr_bear.dx, spr_bear.dy);
+}
+
+void init_game(struct Game *game) {
+	/* 
+    	Bear
+    */
+
+    // Set bear coordinates to the middle of the screen
+    game->bear.x = (GC_WIDTH / 2) - (OBJECT_WIDTH / 2);
+    game->bear.y = (GC_HEIGHT / 2) - (OBJECT_HEIGHT / 2);
+    game->bear.direction = random_direction();
+
+    /*
+		Objects
+    */
+    /* Set the first group of NUM_OBJECTS objects to fire */
+    for (int i = 0; i < NUM_OBJECTS; ++i)
+    {
+    	game->objects[i].type = FIRE;
+    }
+    /* Set the second group op NUM_OBJECTS objects to fire */
+    for (int i = NUM_OBJECTS; i < 2 * NUM_OBJECTS; ++i)
+    {
+    	game->objects[i].type = STAR;
+    }
+
+    /* Generate random coordinates and directions for all objects */
+    for (int i = 0; i < NUM_OBJECTS * 2; ++i)
+    {
+    	game->objects[i].x = random_coordinate_x();
+    	game->objects[i].y = random_coordinate_y();
+    	game->objects[i].direction = random_direction();
+    }
+
+    score = 0;
+}
+
+void start_game(struct Game *game) {
+	//srand(gettime()); TODO
+	init_game(game);
+	game_mode = GAME;
 }
 
 //---------------------------------------------------------------------------------
@@ -136,6 +183,9 @@ int main(int argc, char* argv[]) {
 	printf(str);
 	printf("\x1b[8;1HPress Up to increment sprites");
 	printf("\x1b[9;1HPress Down to decrement sprites");
+
+	// Create a game instance
+	struct Game* game = malloc(sizeof(struct Game));
 
 	// Main loop
 	while (aptMainLoop())
