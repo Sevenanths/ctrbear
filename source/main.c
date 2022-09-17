@@ -247,9 +247,18 @@ void draw_score() {
 	C2D_TextBufClear(g_dynamicBuf);
 }
 
+void draw_lives() {
+	for (int i = 0; i < lives; ++i)
+	{
+		C2D_SpriteSetPos(&spr_bear.spr, (TOUCH_WIDTH / 2) - (16 / 2), 108 + (i * 18));
+		C2D_DrawSprite(&spr_bear.spr);
+	}
+}
+
 void draw_bottom(struct Game *game) {
 	C2D_DrawSprite(&bg_bottom.spr);
 	draw_score();
+	draw_lives();
 }
 
 void read_input(struct Game *game) {
