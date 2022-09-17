@@ -26,6 +26,64 @@ typedef struct
 	float dx, dy; // velocity
 } Sprite;
 
+struct Bear {
+	int x;
+	int y;
+	int direction;
+};
+
+enum BearDirection {
+	BEAR_UP = 1,
+	BEAR_DOWN = 2,
+	BEAR_LEFT = 3,
+	BEAR_RIGHT = 4
+};
+
+struct BearObject {
+	int type;
+	int direction;
+	int x;
+	int y;
+};
+
+enum BearObjectDirection {
+	UP_LEFT = 1,
+	UP_RIGHT = 2,
+	DOWN_LEFT = 3,
+	DOWN_RIGHT = 4
+};
+
+enum BearObjectTypes {
+	FIRE = 1,
+	STAR = 2
+};
+
+enum GameModes {
+	TITLE, GAME, GAME_OVER
+};
+
+struct Game {
+	struct Bear bear;
+	struct BearObject objects[NUM_OBJECTS * 2];
+	int score;
+};
+
+int random_integer(int minimum_number, int max_number) {
+	return rand() % (max_number + 1 - minimum_number) + minimum_number;
+}
+
+int random_coordinate_x() {
+	return random_integer(OBJECT_WIDTH, GC_WIDTH - (OBJECT_WIDTH * 2));
+}
+
+int random_coordinate_y() {
+	return random_integer(OBJECT_HEIGHT, GC_HEIGHT - (OBJECT_WIDTH * 2));
+}
+
+int random_direction() {
+	return random_integer(1, 4);
+}
+
 // Initialise the sprite sheet
 static C2D_SpriteSheet spriteSheet;
 
