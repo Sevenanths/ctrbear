@@ -89,6 +89,7 @@ int random_direction() {
 
 int score = 0;
 int lives = 3;
+bool paused = false;
 int game_mode = TITLE;
 int flicker_timer = 0;
 bool show_button_prompt = true;
@@ -266,6 +267,10 @@ void read_input(struct Game *game) {
 		
 	u32 kDown = hidKeysDown();
 
+	// Check for pause
+	if (kDown & KEY_START)
+		paused = !paused;
+
 	// Digital input
 	if (kDown & KEY_UP)
 		game->bear.direction = BEAR_UP;
@@ -431,7 +436,10 @@ int main(int argc, char* argv[]) {
 		C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
 		C2D_SceneBegin(top);
 
-		movement(game);
+		if (!paused) {
+			movement(game);
+		}
+
 		draw(game);
 
 		C2D_TargetClear(bot, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
