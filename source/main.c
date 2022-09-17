@@ -160,6 +160,37 @@ void start_game(struct Game *game) {
 	game_mode = GAME;
 }
 
+void draw() {
+	// Background image
+	C2D_DrawSprite(&bg_background.spr);
+
+	// Horizontal walls
+	for (int x = 0; x < 25; ++x)
+	{
+		// Top walls
+		C2D_SpriteSetPos(&spr_wall.spr, x * OBJECT_WIDTH, 0);
+		C2D_DrawSprite(&spr_wall.spr);
+
+		// Bottom walls
+		C2D_SpriteSetPos(&spr_wall.spr, x * OBJECT_WIDTH, GC_HEIGHT - OBJECT_HEIGHT);
+		C2D_DrawSprite(&spr_wall.spr);
+	}
+
+	// Vertical walls
+	for (int y = 0; y < 15; ++y)
+	{
+		// Left walls
+		C2D_SpriteSetPos(&spr_wall.spr, 0, y * OBJECT_HEIGHT);
+		C2D_DrawSprite(&spr_wall.spr);
+
+		// Right walls
+		C2D_SpriteSetPos(&spr_wall.spr, GC_WIDTH - OBJECT_WIDTH, y * OBJECT_HEIGHT);
+		C2D_DrawSprite(&spr_wall.spr);
+	}
+
+	C2D_DrawSprite(&spr_bear.spr);
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char* argv[]) {
 //---------------------------------------------------------------------------------
@@ -220,8 +251,7 @@ int main(int argc, char* argv[]) {
 		C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
 		C2D_SceneBegin(top);
 
-		C2D_DrawSprite(&bg_background.spr);
-		C2D_DrawSprite(&spr_bear.spr);
+		draw();
 
 		C3D_FrameEnd(0);
 	}
