@@ -290,7 +290,7 @@ void draw_score() {
 void draw_lives() {
 	for (int i = 0; i < lives; ++i)
 	{
-		C2D_SpriteSetPos(&spr_bear.spr, (TOUCH_WIDTH / 2) - (16 / 2), 108 + (i * 18));
+		C2D_SpriteSetPos(&spr_bear.spr, (TOUCH_WIDTH / 2) - (OBJECT_WIDTH / 2), 108 + (i * 18));
 		C2D_DrawSprite(&spr_bear.spr);
 	}
 }
