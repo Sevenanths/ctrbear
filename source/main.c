@@ -15,6 +15,9 @@
 #define GC_WIDTH 400
 #define GC_HEIGHT 240
 
+#define TOUCH_WIDTH 320
+#define TOUCH_HEIGHT 240
+
 #define BEAR_SPEED 6
 #define OBJECT_SPEED 3
 #define NUM_OBJECTS 3
@@ -94,11 +97,12 @@ static C2D_SpriteSheet spriteSheet;
 
 // Initialise text-related things
 static C2D_Font fnt_dinbek;
-C2D_TextBuf g_staticBuf;
-C2D_Text g_staticText;
+C2D_TextBuf g_dynamicBuf;
+C2D_Text g_dynamicText;
 
 int white;
-float score_size = 0.5f;
+int black;
+float score_size = 1;
 
 // Sprites
 Sprite spr_bear;
@@ -207,6 +211,39 @@ void draw(struct Game *game) {
 
 	C2D_SpriteSetPos(&spr_bear.spr, spr_bear.dx, spr_bear.dy);
 	C2D_DrawSprite(&spr_bear.spr);
+}
+
+void draw_score(int score) {
+	// Initialise the string to store the score in
+	char str_score[32];
+	itoa(score, str_score, 10);
+
+	// Initialise the text
+	// By pre-initialising the text, we will be able to figure out its dimensions pre-emptively
+	C2D_TextFontParse(&g_dynamicText, fnt_dinbek, g_dynamicBuf, str_score);
+	C2D_TextOptimize(&g_dynamicText);
+
+	// Now, let's figure out the width (and height)
+	float score_width;
+	float score_height;
+
+	C2D_TextGetDimensions(&g_dynamicText, score_size, score_size, &score_width, &score_height);
+
+	// Draw score
+	int score_x = (TOUCH_WIDTH / 2) + 1;
+	int score_y = 42;
+
+	
+	// The first four calls are used to draw the font outline
+	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x + 1, score_y + 1, 0.5f, score_size, score_size, white);
+	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x - 1, score_y - 1, 0.5f, score_size, score_size, white);
+	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x + 1, score_y - 1, 0.5f, score_size, score_size, white);
+	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x - 1, score_y + 1, 0.5f, score_size, score_size, white);
+
+	// The final call is the actual centred font
+	C2D_DrawText(&g_dynamicText, C2D_WithColor | C2D_AlignCenter, score_x, score_y, 0.5f, score_size, score_size, white);
+
+	C2D_TextBufClear(g_dynamicBuf);
 }
 
 void read_input(struct Game *game) {
@@ -351,8 +388,9 @@ int main(int argc, char* argv[]) {
 
 	// Font
 	fnt_dinbek = C2D_FontLoad("romfs:/gfx/dinbekbold.bcfnt");
-	g_staticBuf  = C2D_TextBufNew(4096); // support up to 4096 glyphs in the buffer
+	g_dynamicBuf  = C2D_TextBufNew(4096); // support up to 4096 glyphs in the buffer
 	white = C2D_Color32f(255.0f,255.0f,255.0f,255.0f);
+	black = C2D_Color32f(17.0f,17.0f,17.0f,255.0f);
 
 	// Load graphics
 	spriteSheet = C2D_SpriteSheetLoad("romfs:/gfx/sprites.t3x");
@@ -382,9 +420,7 @@ int main(int argc, char* argv[]) {
 		C2D_SceneBegin(bot);
 
 		C2D_DrawSprite(&bg_bottom.spr);
-
-		C2D_TextFontParse(&g_staticText, fnt_dinbek, g_staticBuf, "Banana.");
-		C2D_DrawText(&g_staticText, C2D_WithColor, 8.0f, 8.0f, 0.5f, score_size, score_size, white);
+		draw_score(score);
 
 		C3D_FrameEnd(0);
 	}
