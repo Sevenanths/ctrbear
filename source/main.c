@@ -203,6 +203,19 @@ void read_input(struct Game *game) {
 }
 
 void movement(struct Game *game) {
+	/* 
+		Bear collision (walls)
+	*/
+	if (game->bear.x - BEAR_SPEED <= OBJECT_HEIGHT) {
+		game->bear.direction = BEAR_RIGHT;
+	} else if (game->bear.x + BEAR_SPEED >= GC_WIDTH - (OBJECT_WIDTH * 2)) {
+		game->bear.direction = BEAR_LEFT;
+	} else if (game->bear.y - BEAR_SPEED <= OBJECT_HEIGHT) {
+		game->bear.direction = BEAR_DOWN;
+	} else if (game->bear.y + BEAR_SPEED >= GC_HEIGHT - (OBJECT_HEIGHT * 2)) {
+		game->bear.direction = BEAR_UP;
+	}
+
 	/*
 		Bear movement
 	*/
