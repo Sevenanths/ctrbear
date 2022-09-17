@@ -1,0 +1,6 @@
+--atlas -f rgba8888 -z auto
+bear16.png
+wall16.png
+diamond16.png
+fire16.png
+star16.png
