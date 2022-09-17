@@ -107,12 +107,16 @@ static void initSprites() {
 	C2D_SpriteFromSheet(&spr_wall.spr, spriteSheet, 1);
 	C2D_SpriteFromSheet(&spr_fire.spr, spriteSheet, 3);
 	C2D_SpriteFromSheet(&spr_star.spr, spriteSheet, 4);
+	C2D_SpriteFromSheet(&bg_background.spr, spriteSheet, 5);
 
 	spr_bear.dx = 150;
 	spr_bear.dy = 150;
 
 	//C2D_SpriteMove(&spr_bear.spr, spr_bear.dx, spr_bear.dy);
 	C2D_SpriteSetPos(&spr_bear.spr, spr_bear.dx, spr_bear.dy);
+
+	// Background position is always 0 0
+	C2D_SpriteSetPos(&bg_background.spr, 0, 0);
 }
 
 void init_game(struct Game *game) {
@@ -216,6 +220,7 @@ int main(int argc, char* argv[]) {
 		C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
 		C2D_SceneBegin(top);
 
+		C2D_DrawSprite(&bg_background.spr);
 		C2D_DrawSprite(&spr_bear.spr);
 
 		C3D_FrameEnd(0);
