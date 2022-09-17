@@ -9,9 +9,15 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MAX_SPRITES   768
-#define SCREEN_WIDTH  400
-#define SCREEN_HEIGHT 240
+#define OBJECT_WIDTH 16
+#define OBJECT_HEIGHT 16
+
+#define GC_WIDTH 400
+#define GC_HEIGHT 240
+
+#define BEAR_SPEED 6
+#define OBJECT_SPEED 3
+#define NUM_OBJECTS 3
 
 // Simple sprite struct
 typedef struct
