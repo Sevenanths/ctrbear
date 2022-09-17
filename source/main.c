@@ -65,6 +65,10 @@ enum GameModes {
 	TITLE, GAME, GAME_OVER
 };
 
+enum Difficulties {
+	CLASSIC, HARD
+};
+
 struct Game {
 	struct Bear bear;
 	struct BearObject objects[NUM_OBJECTS * 2];
@@ -91,6 +95,7 @@ int score = 0;
 int lives = 3;
 bool paused = false;
 int game_mode = TITLE;
+int difficulty = CLASSIC;
 int flicker_timer = 0;
 bool show_button_prompt = true;
 
@@ -121,8 +126,12 @@ Sprite spr_bear;
 Sprite spr_wall;
 Sprite spr_fire;
 Sprite spr_star;
+Sprite spr_classic;
+Sprite spr_hard;
 Sprite bg_background;
 Sprite bg_bottom;
+Sprite bg_title;
+Sprite bg_title_bottom;
 
 //---------------------------------------------------------------------------------
 static void initSprites() {
@@ -134,10 +143,16 @@ static void initSprites() {
 	C2D_SpriteFromSheet(&spr_star.spr, spriteSheet, 4);
 	C2D_SpriteFromSheet(&bg_background.spr, spriteSheet, 5);
 	C2D_SpriteFromSheet(&bg_bottom.spr, spriteSheet, 6);
+	C2D_SpriteFromSheet(&bg_title.spr, spriteSheet, 7);
+	C2D_SpriteFromSheet(&bg_title_bottom.spr, spriteSheet, 8);
+	C2D_SpriteFromSheet(&spr_classic.spr, spriteSheet, 9);
+	C2D_SpriteFromSheet(&spr_hard.spr, spriteSheet, 10);
 
 	// Background position is always 0 0
 	C2D_SpriteSetPos(&bg_background.spr, 0, 0);
 	C2D_SpriteSetPos(&bg_bottom.spr, 0, 0);
+	C2D_SpriteSetPos(&bg_title.spr, 0, 0);
+	C2D_SpriteSetPos(&bg_title_bottom.spr, 0, 0);
 }
 
 static void initStrings() {
@@ -286,6 +301,25 @@ void draw_bottom(struct Game *game) {
 	draw_lives();
 }
 
+void draw_title_top() {
+	C2D_DrawSprite(&bg_title.spr);
+}
+
+void draw_title_bottom() {
+	C2D_DrawSprite(&bg_title_bottom.spr);
+
+	int difficulty_x = (TOUCH_WIDTH / 2) - (64 / 2);
+	int difficulty_y = 85;
+
+	if (difficulty == CLASSIC) {
+		C2D_SpriteSetPos(&spr_classic.spr, difficulty_x, difficulty_y);
+		C2D_DrawSprite(&spr_classic.spr);
+	} else if (difficulty == HARD) {
+		C2D_SpriteSetPos(&spr_hard.spr, difficulty_x, difficulty_y);
+		C2D_DrawSprite(&spr_hard.spr);
+	}
+}
+
 void read_input(struct Game *game) {
 	hidScanInput();
 		
@@ -304,6 +338,22 @@ void read_input(struct Game *game) {
 		game->bear.direction = BEAR_LEFT;
 	if (kDown & KEY_RIGHT)
 		game->bear.direction = BEAR_RIGHT;
+}
+
+void read_title_input() {
+	hidScanInput();
+		
+	u32 kDown = hidKeysDown();
+
+	// Check for pause
+	if (kDown & KEY_START)
+		game_mode = GAME;
+
+	// Digital input
+	if (kDown & KEY_LEFT)
+		difficulty = CLASSIC;
+	if (kDown & KEY_RIGHT)
+		difficulty = HARD;
 }
 
 void movement(struct Game *game) {
@@ -456,23 +506,34 @@ int main(int argc, char* argv[]) {
 	// Main loop
 	while (aptMainLoop())
 	{
-		// Read input
-		read_input(game);
 
 		// Render the scene
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
-		C2D_SceneBegin(top);
-
-		if (!paused)
-			movement(game);
-
-		draw(game);
-
 		C2D_TargetClear(bot, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
-		C2D_SceneBegin(bot);
+		if (game_mode == TITLE) {
+			read_title_input();
 
-		draw_bottom(game);
+			C2D_SceneBegin(top);
+			draw_title_top();
+
+			C2D_SceneBegin(bot);
+			draw_title_bottom();
+		} else if (game_mode == GAME) {
+			// Read input
+			read_input(game);
+
+			if (!paused)
+				movement(game);
+
+			C2D_SceneBegin(top);
+			draw(game);
+			
+			C2D_SceneBegin(bot);
+			draw_bottom(game);
+		} else if (game_mode == GAME_OVER) {
+
+		}
 
 		C3D_FrameEnd(0);
 	}
