@@ -23,19 +23,25 @@ typedef struct
 // Initialise the sprite sheet
 static C2D_SpriteSheet spriteSheet;
 
-// Bear sprite
+// Sprites
 Sprite spr_bear;
+Sprite spr_wall;
+Sprite spr_fire;
+Sprite spr_star;
 
 //---------------------------------------------------------------------------------
 static void initSprites() {
 //---------------------------------------------------------------------------------
-	C2D_SpriteFromSheet(&spr_bear.spr, spriteSheet, 1);
+	// Attach the sprites from the sprite sheet
+	C2D_SpriteFromSheet(&spr_bear.spr, spriteSheet, 0);
+	C2D_SpriteFromSheet(&spr_wall.spr, spriteSheet, 1);
+	C2D_SpriteFromSheet(&spr_fire.spr, spriteSheet, 3);
+	C2D_SpriteFromSheet(&spr_star.spr, spriteSheet, 4);
 
 	spr_bear.dx = 150;
 	spr_bear.dy = 150;
 
 	//C2D_SpriteMove(&spr_bear.spr, spr_bear.dx, spr_bear.dy);
-	C2D_SpriteSetCenter(&spr_bear.spr, 0.5f, 0.5f);
 	C2D_SpriteSetPos(&spr_bear.spr, spr_bear.dx, spr_bear.dy);
 }
 
