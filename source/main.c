@@ -99,6 +99,16 @@ static C2D_SpriteSheet spriteSheet;
 
 // Initialise text-related things
 static C2D_Font fnt_dinbek;
+
+// Static text
+C2D_TextBuf g_staticBuf;
+C2D_Text g_staticText[3];
+
+enum StringKeys {
+	PAUSED = 0,
+};
+
+// Dynamic text
 C2D_TextBuf g_dynamicBuf;
 C2D_Text g_dynamicText;
 
@@ -128,6 +138,11 @@ static void initSprites() {
 	// Background position is always 0 0
 	C2D_SpriteSetPos(&bg_background.spr, 0, 0);
 	C2D_SpriteSetPos(&bg_bottom.spr, 0, 0);
+}
+
+static void initStrings() {
+	C2D_TextFontParse(&g_staticText[PAUSED], fnt_dinbek, g_staticBuf, "PAUSED");
+	C2D_TextOptimize(&g_staticText[PAUSED]);
 }
 
 void init_game(struct Game *game) {
@@ -169,6 +184,17 @@ void start_game(struct Game *game) {
 	//srand(gettime()); TODO
 	init_game(game);
 	game_mode = GAME;
+}
+
+void draw_text_outline(const C2D_Text *text, int x, int y, int size) {
+	// The first four calls are used to draw the font outline
+	C2D_DrawText(text, C2D_WithColor | C2D_AlignCenter, x + 1, y + 1, 0.5f, size, size, black);
+	C2D_DrawText(text, C2D_WithColor | C2D_AlignCenter, x + 1, y - 1, 0.5f, size, size, black);
+	C2D_DrawText(text, C2D_WithColor | C2D_AlignCenter, x - 1, y + 1, 0.5f, size, size, black);
+	C2D_DrawText(text, C2D_WithColor | C2D_AlignCenter, x - 1, y - 1, 0.5f, size, size, black);
+
+	// The final call is the actual centred font
+	C2D_DrawText(text, C2D_WithColor | C2D_AlignCenter, x, y, 0.5f, size, size, white);
 }
 
 void draw(struct Game *game) {
@@ -213,6 +239,10 @@ void draw(struct Game *game) {
 
 	C2D_SpriteSetPos(&spr_bear.spr, spr_bear.dx, spr_bear.dy);
 	C2D_DrawSprite(&spr_bear.spr);
+
+	if (paused) {
+		draw_text_outline(&g_staticText[PAUSED], (GC_WIDTH / 2), (GC_HEIGHT / 2) - 20, 1.5f);
+	}
 }
 
 void draw_score() {
@@ -412,6 +442,7 @@ int main(int argc, char* argv[]) {
 	// Font
 	fnt_dinbek = C2D_FontLoad("romfs:/gfx/dinbekbold.bcfnt");
 	g_dynamicBuf  = C2D_TextBufNew(4096); // support up to 4096 glyphs in the buffer
+	g_staticBuf  = C2D_TextBufNew(4096); // support up to 4096 glyphs in the buffer
 	white = C2D_Color32f(255.0f,255.0f,255.0f,255.0f);
 	black = C2D_Color32f(17.0f,17.0f,17.0f,255.0f);
 
@@ -421,6 +452,9 @@ int main(int argc, char* argv[]) {
 
 	// Initialize sprites
 	initSprites();
+	// Initialize strings
+	initStrings();
+
 	// Create a game instance
 	struct Game* game = malloc(sizeof(struct Game));
 	init_game(game);
@@ -436,9 +470,8 @@ int main(int argc, char* argv[]) {
 		C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
 		C2D_SceneBegin(top);
 
-		if (!paused) {
+		if (!paused)
 			movement(game);
-		}
 
 		draw(game);
 
