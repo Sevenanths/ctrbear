@@ -41,6 +41,15 @@ GRAPHICS	:=	gfx
 ROMFS		:=	romfs
 GFXBUILD	:=	$(ROMFS)/gfx
 
+#------
+# SMDH
+#------
+
+APP_TITLE := Bear
+APP_DESCRIPTION := Anthe's first PC game, now for 3DS, again!
+APP_AUTHOR := Anthe
+ICON  := icon.png
+
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
