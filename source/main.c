@@ -626,6 +626,7 @@ int main(int argc, char* argv[]) {
 	// Delete font
 	C2D_FontFree(fnt_dinbek);
 
+	sound_stop(home);
 	audio_stop();
 
 	free(game);
