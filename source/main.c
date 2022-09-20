@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "sound.h"
+
 #define OBJECT_WIDTH 16
 #define OBJECT_HEIGHT 16
 
@@ -146,6 +148,9 @@ Sprite bg_title;
 Sprite bg_title_bottom;
 Sprite bg_game_over;
 Sprite bg_game_over_bottom;
+
+// Sound variable
+struct sound *home;
 
 //---------------------------------------------------------------------------------
 static void initSprites() {
@@ -527,6 +532,8 @@ int main(int argc, char* argv[]) {
 	C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
 	C2D_Prepare();
 
+	audio_init();
+
 	// Create screens
 	C3D_RenderTarget* top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
 	C3D_RenderTarget* bot = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
@@ -546,6 +553,10 @@ int main(int argc, char* argv[]) {
 	initSprites();
 	// Initialize strings
 	initStrings();
+
+	home = sound_create(BGM);
+    if (home != NULL) audio_load_ogg("romfs:/bg.ogg", home);
+    else home->status = -1;
 
 	// Create a game instance
 	struct Game* game = malloc(sizeof(struct Game));
@@ -597,6 +608,8 @@ int main(int argc, char* argv[]) {
 
 	// Delete font
 	C2D_FontFree(fnt_dinbek);
+
+	audio_stop();
 
 	// Deinit libs
 	C2D_Fini();
