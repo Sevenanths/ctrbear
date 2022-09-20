@@ -108,6 +108,7 @@ int random_direction() {
 int score = 0;
 int lives = 0;
 bool paused = false;
+bool quit_game = false;
 int game_mode = TITLE;
 int difficulty = CLASSIC;
 int flicker_timer = 0;
@@ -372,6 +373,10 @@ void read_input(struct Game *game) {
 	if (kDown & KEY_START)
 		paused = !paused;
 
+	// Check for exit
+	if (kDown & KEY_SELECT)
+		quit_game = true;
+
 	// Digital input
 	if (kDown & KEY_UP)
 		game->bear.direction = BEAR_UP;
@@ -392,6 +397,10 @@ void read_title_input(struct Game *game) {
 	if (kDown & KEY_START)
 		start_game(game);
 
+	// Check for exit
+	if (kDown & KEY_SELECT)
+		quit_game = true;
+
 	// Digital input
 	if (kDown & KEY_LEFT)
 		difficulty = CLASSIC;
@@ -407,6 +416,10 @@ void read_game_over_input() {
 	// Check for pause
 	if (kDown & KEY_START)
 		game_mode = TITLE;
+
+	// Check for exit
+	if (kDown & KEY_SELECT)
+		quit_game = true;
 }
 
 void movement(struct Game *game) {
@@ -601,6 +614,10 @@ int main(int argc, char* argv[]) {
 		}
 
 		C3D_FrameEnd(0);
+
+		if (quit_game) {
+			break;
+		}
 	}
 
 	// Delete graphics
@@ -610,6 +627,8 @@ int main(int argc, char* argv[]) {
 	C2D_FontFree(fnt_dinbek);
 
 	audio_stop();
+
+	free(game);
 
 	// Deinit libs
 	C2D_Fini();
