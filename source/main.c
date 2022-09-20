@@ -1,6 +1,3 @@
-// Simple citro2d sprite drawing example
-// Images borrowed from:
-//   https://kenney.nl/assets/space-shooter-redux
 #include <citro2d.h>
 
 #include <assert.h>
